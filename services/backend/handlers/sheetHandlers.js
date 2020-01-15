@@ -3,6 +3,8 @@ const UsersDiary = require('../models/usersDiary.model')
 const UsersSheets = require('../models/usersSheets.model')
 const Warmup = require('../models/warmup.model')
 
+const generator = require('../logic/sheetGenerator')
+
 let handlers = {}
 
 handlers.takeSheet = (req, res) => {
@@ -17,7 +19,20 @@ handlers.takeSheet = (req, res) => {
   })
 
   userSheet.save()
-    .then(() => res.json('User sheet successfully added!'))
+    .then(() => {
+      let promise = new Promise((resolve, reject) => {
+        resolve(generator.generatorSheet(userId, day1, day2))      
+      });
+      promise.then((result) => {
+        const userDiary = new UsersDiary(result)
+        userDiary.save()
+          .then(() => {
+            res.json('User sheet successfully added!')
+          }).catch((err) => {
+            res.status(400).json('Error sheet ' + err)
+          })
+      })
+    })
     .catch(err => res.status(400).json('Error ' + err))
 }
 
