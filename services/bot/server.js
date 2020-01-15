@@ -5,7 +5,7 @@ const VkBot = require('node-vk-bot-api')
 const Scene = require('node-vk-bot-api/lib/scene')
 const Session = require('node-vk-bot-api/lib/session')
 const Stage = require('node-vk-bot-api/lib/stage')
-// const fetch = require('node-fetch');
+const fetch = require('node-fetch');
 
 const utils = require('./urils')
 
@@ -38,40 +38,48 @@ bot.command('что умеешь?', (ctx) => {
 
 bot.command('расписание', (ctx) => {
   const text = ctx.message.text
-  let dayNumber = []
+  let dayNumbers = []
   let textArray = text.split(' ').slice(1)
-  console.log(`Type of textArray: ${typeof(textArray)}, Obj: ${textArray}`);
+  // console.log(`Type of textArray: ${typeof(textArray)}, Obj: ${textArray}`);
   
   if (textArray.length === 2) {
-    const dataRegExp = RegExp(/([0-2][0-9]|(3)[0-1])(-|.)(((0)[0-9])|((1)[0-2]))(-|.)\d{4}/g)
+    const dataRegExp = RegExp(/([0-2][0-9]|(3)[0-1])(-|.)(((0)[0-9])|((1)[0-2]))(-|.)\d{4}/g) // 2000-02-12 or 09-12-2003
     // const dataRegExp = (/((((?:19|20)\d\d)[-|.|\/](0[1-9]|1[012])[-|.|\/](0[1-9]|[12][0-9]|3[01]))|(([0-2][0-9]|(3)[0-1])(-|.|\/)(((0)[0-9])|((1)[0-2]))(-|.|\/)\d{4}))/g)
     const textRegExp = RegExp(/[А-Яа-я( )]/g)
     console.log(textArray)
     if (textArray.every((num) => num.match(dataRegExp) != null)){  // format: 19-02-2020
       textArray.forEach(element => {        
-        dayNumber.push(utils.dateInNumber(element))
+        dayNumbers.push(utils.dateInNumber(element))
       });
     } else if (textArray.every((num) => num.match(textRegExp) != null)){   // format: пн вт
       textArray.forEach(element => {
-        dayNumber.push(utils.weekDayInNumber(element))
+        dayNumbers.push(utils.weekDayInNumber(element))
       });
     } else {
       ctx.reply(`Извините, но я не знаю таких дней недели или дат 😅`)
     }
-    // if (!dayNumber.some(elem => elem === 1)) {
+    // if (!dayNumbers.some(elem => elem === 1)) {
     //   ctx.reply(`Извините, но я не знаю таких дней недели или дат 😅`)
     // }
   }
-  // console.log(`Type of dayNumber: ${typeof(dayNumber)}, Obj0: ${dayNumber[0]}, Obj1: ${dayNumber[1]}`);
+  // console.log(`Type of dayNumbers: ${typeof(dayNumbers)}, Obj0: ${dayNumbers[0]}, Obj1: ${dayNumbers[1]}`);
 
-  (async () => {
-    let response = await fetch(process.env.SERVER_URL, {
-      method: 'POST'
-    }).then().catch()
-
-    let result = await response.json();
-    ctx.reply(`Ваш массив ${dayNumber}`)
-  })()
+  let response = fetch('http://localhost:3000/sheet', {
+      method: 'POST',
+      body: JSON.stringify({
+        user_id: '12',
+        day1: dayNumbers[0],
+        day2: dayNumbers[1],
+      })
+    }).then((res) => {
+      return res.json()
+    }).then((result) => {
+      // console.log(`${result}\n`);
+      ctx.reply(`Вы выбрали ${dayNumbers}`)
+      console.log(`Ваш массив ${result.mess}`)
+    }).catch((err) => {
+      console.log(`Have a problem with fetch: ${err}`)
+    })
   
 })
 
