@@ -31,7 +31,7 @@ handlers.takeSheet = (req, res) => {
           }).catch((err) => {
             res.status(400).json('Error sheet ' + err)
           })
-      })
+      }).catch(err => res.status(400).json('Error save UsersDiary: ' + err))
     })
     .catch(err => res.status(400).json('Error ' + err))
 }

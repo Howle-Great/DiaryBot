@@ -1,3 +1,4 @@
+this.params = []
 const warmup = [
   {
     description: `- Разминка - ${this.params[0]} минут`,
@@ -34,7 +35,7 @@ const exercises = [
   }
 ]
 
-let exercises = {}
+let Exercises = {}
 
 function generateFakeExerciseTime(time, deltaGeneration = 4) {
   const generatorTime = () => {Math.floor(Math.random() * ((time + deltaGeneration) - (time - deltaGeneration))) + (time - deltaGeneration)}
@@ -46,7 +47,7 @@ function generateFakeExerciseTime(time, deltaGeneration = 4) {
 }
 
 
-exercises.give = (props) => {
+Exercises.give = (props) => {
   let {exerciseId, exerciseParams, exerciseTimeParams, warmupId, warmupTimeParams} = {props}
   let exercise = Object.assign(this.exercises.find((elem) => elem.id == exerciseId))
   let warmup = Object.assign(this.warmup.find((elem) => elem.id == warmupId))
@@ -70,7 +71,7 @@ exercises.give = (props) => {
   }
 }
 
-exercises.generate = (props) => {
+Exercises.generate = (props) => {
   let {exerciseId, warmupId} = {props}
   let exercise = Object.assign(this.exercises.find((elem) => elem.id == exerciseId))
   let warmup = Object.assign(this.warmup.find((elem) => elem.id == warmupId))

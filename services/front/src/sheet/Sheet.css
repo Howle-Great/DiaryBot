@@ -1,0 +1,26 @@
+.sheet {
+
+}
+
+.sheet_top, .sheet_row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.sheet_top .table_element:not(:first) {
+  margin-left: 1px;
+}
+
+.sheet_row:last-child {
+  border-bottom: 1px solid black;
+}
+
+.table_element {
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  padding: 10px;
+}
+
+.table_element:nth-child(5n) {
+  border-right: 1px solid black;
+}

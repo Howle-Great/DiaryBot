@@ -1,4 +1,4 @@
-module.exports = class newDate extends Data {
+module.exports = class newDate extends Date {
   toNextDay(days = 1) {
     this.setTime(this.getTime() + days * 1000*60*60*24)
   }
